@@ -63,7 +63,7 @@ public class WebService : System.Web.Services.WebService
 
         MySqlConnection conn = new MySqlConnection(strConnection);
         conn.Open();
-        string sql = "select mahoadon,ngayhoadon from hoadon where trangthai = @trangthai";
+        string sql = "select mahoadon,ngayhoadon,tonghoadon,sodienthoai,diachi from hoadon where trangthai = @trangthai";
         MySqlCommand cmd = conn.CreateCommand();
         MySqlParameter tt = new MySqlParameter("@trangthai", MySqlDbType.Int32);
         tt.Value = trangthai;
@@ -77,6 +77,9 @@ public class WebService : System.Web.Services.WebService
             Bill b = new Bill();
             b.mahoadon = reader.GetInt32(0);
             b.dateBill = reader.GetString(1);
+            b.tonghoadon = 0.0;
+            b.sodienthoai = reader.GetString(3);
+            b.diachi = reader.GetString(4);
             bills.Add(b);
         }
         conn.Close();
@@ -85,7 +88,6 @@ public class WebService : System.Web.Services.WebService
     [WebMethod]
     public int deleteIteminBill(int mahd, int masp)
     {
-        List<Bill> bills = new List<Bill>();
         string strConnection = "server=localhost;uid=root;pwd=;database=android;";
 
         MySqlConnection conn = new MySqlConnection(strConnection);
@@ -99,6 +101,45 @@ public class WebService : System.Web.Services.WebService
         cmd.CommandText = sql;
         cmd.Parameters.Add(hd);
         cmd.Parameters.Add(sp);
+        return cmd.ExecuteNonQuery();
+    }
+    [WebMethod]
+    public int changeQuantityProduct(int mahd, int masp,int soluong)
+    {
+        List<Bill> bills = new List<Bill>();
+        string strConnection = "server=localhost;uid=root;pwd=;database=android;";
+
+        MySqlConnection conn = new MySqlConnection(strConnection);
+        conn.Open();
+        string sql = "update chitiethoadon set soluong=@soluong where mahd = @mahd and masp=@masp";
+        MySqlCommand cmd = conn.CreateCommand();
+        MySqlParameter hd = new MySqlParameter("@mahd", MySqlDbType.Int32);
+        hd.Value = mahd;
+        MySqlParameter sp = new MySqlParameter("@masp", MySqlDbType.Int32);
+        sp.Value = masp;
+        MySqlParameter sl = new MySqlParameter("@soluong", MySqlDbType.Int32);
+        sl.Value = soluong;
+        cmd.CommandText = sql;
+        cmd.Parameters.Add(hd);
+        cmd.Parameters.Add(sp);
+        cmd.Parameters.Add(sl);
+        return cmd.ExecuteNonQuery();
+    }
+    [WebMethod]
+    public int deleteBill(int mahd)
+    {
+        string strConnection = "server=localhost;uid=root;pwd=;database=android;";
+
+        MySqlConnection conn = new MySqlConnection(strConnection);
+        conn.Open();
+        string sql = "update hoadon set trangthai='3' where mahoadon = @mahd ";
+        MySqlCommand cmd = conn.CreateCommand();
+        MySqlParameter hd = new MySqlParameter("@mahd", MySqlDbType.Int32);
+        hd.Value = mahd;
+
+        cmd.CommandText = sql;
+        cmd.Parameters.Add(hd);
+    
         return cmd.ExecuteNonQuery();
     }
 }
