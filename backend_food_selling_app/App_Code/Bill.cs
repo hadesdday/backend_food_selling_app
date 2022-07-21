@@ -7,12 +7,13 @@ using System.Web;
 /// Summary description for Bill
 /// </summary>
 [Serializable]
-public class Bill
+public class Bill 
 {
   
-    public int mahoadon { get; set; }
+    public int idBill { get; set; }
     public string dateBill { get; set; } 
-    public string sodienthoai { get; set; }
-    public string diachi { get; set; }
-    public double tonghoadon { get; set; }
+    public string phoneNumber { get; set; }
+    public string address { get; set; }
+    public int billPrice { get; set; }
+    public string payment { get;set; }
 }
