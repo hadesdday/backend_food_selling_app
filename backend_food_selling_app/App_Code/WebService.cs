@@ -254,4 +254,83 @@ public class WebService : System.Web.Services.WebService
       
         return cmd.ExecuteNonQuery();
     }
+    
+        [WebMethod (EnableSession = true)]
+        public User login(string user, string pass)
+        {
+            string strConn = "server=localhost;database=webservice;user=root;pwd=123456";
+
+            MySqlConnection conn = new MySqlConnection(strConn);
+            conn.Open();
+
+            string query = "select * from webservice.user where username ='" + user + "'and password = '" + pass + "'";
+            MySqlCommand cmd = new MySqlCommand(query, conn);
+            MySqlDataReader da = cmd.ExecuteReader();
+            User u = new User();
+            while (da.Read())
+            {
+                u.username = da.GetString(1);
+                u.password = da.GetString(2);
+                u.email = da.GetString(3);
+                Session["user"] = user;
+                return u;
+            }
+            return null;
+        }
+        
+        [WebMethod(EnableSession = true)]
+        public string logout()
+        {
+            if(Session["user"] != null)
+            {
+               return (string)(Session["user"] = null);
+            }
+            return "";
+        }
+        
+        [WebMethod]
+        public int register(string username, string password, string email)
+        {
+            string strConn = "server=localhost;database=webservice;user=root;pwd=123456";
+            MySqlConnection conn = new MySqlConnection(strConn);
+            conn.Open();
+
+            string query = "insert into webservice.user(username, password, email)" +
+                "values ('" + username + "','" + password + "','" + email + "')";
+            MySqlCommand cmd = new MySqlCommand(query, conn);
+            return cmd.ExecuteNonQuery();
+        }
+        
+        [WebMethod]
+        public User checkUser(string username)
+        {
+            string strConn = "server=localhost;database=webservice;user=root;pwd=123456";
+            MySqlConnection conn = new MySqlConnection(strConn);
+            conn.Open();
+
+            string query = "select * from webservice.user where username = '" + username + "'";
+            MySqlCommand cmd = new MySqlCommand(query, conn);
+            MySqlDataReader da = cmd.ExecuteReader();
+            while (da.Read())
+            {
+                User u = new User();
+                u.username = da.GetString(1);
+                u.password = da.GetString(2);
+                u.email = da.GetString(3);
+                return u;
+            }
+            return null;
+        }
+        
+        [WebMethod]
+        public int changePassword(string username, string newpassword)
+        {
+            string strConn = "server=localhost;database=webservice;user=root;pwd=123456";
+            MySqlConnection conn = new MySqlConnection(strConn);
+            conn.Open();
+
+            string query = "update webservice.user set password ='" + newpassword + "'where username ='" + username + "'";
+            MySqlCommand cmd = new MySqlCommand(query, conn);
+            return cmd.ExecuteNonQuery();
+        }
 }
