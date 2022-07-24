@@ -29,4 +29,6 @@ public class BillEntity
     [Required(ErrorMessage = "- Thieu trang thai hoa don")]
     [Column("status", TypeName = "int")]
     public int Status { get; set; }
+    [Column("createdAt", TypeName = "timestamp")]
+    public string CreatedAt { get; set; }
 }
