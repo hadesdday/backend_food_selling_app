@@ -10,7 +10,6 @@ using System.Web;
 public class BillEntity
 {
     [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("id", TypeName = "int")]
     public int Id { get; set; }
 

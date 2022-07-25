@@ -18,7 +18,7 @@ public class SaleEntity
     public int FoodType { get; set; }
     [Column("rate", TypeName = "double")]
     public double Rate { get; set; }
-    [Column("end_time", TypeName = "datetime")]
+    [Column("end_time", TypeName = "timestamp")]
     public string EndTime { get; set; }
     [Column("description", TypeName = "text")]
     public string Description { get; set; }
