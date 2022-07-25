@@ -22,6 +22,7 @@ public class DatabaseContext : DbContext
 
         modelBuilder.Entity<BillDetailsEntity>(entity =>
         {
+            entity.HasNoKey();
             entity.Property(e => e.FoodId);
             entity.Property(e => e.BillId);
             entity.Property(e => e.Amount);

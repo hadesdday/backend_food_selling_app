@@ -63,9 +63,16 @@ public class AdminService : System.Web.Services.WebService
     [WebMethod]
     public List<BillDetailsEntity> GetOrderDetails(int BillId)
     {
-        List<BillDetailsEntity> list = new List<BillDetailsEntity>();
-        list = _context.Bill_Details.Where(t => t.BillId == BillId).ToList<BillDetailsEntity>();
-        return list;
+        try
+        {
+            List<BillDetailsEntity> list = new List<BillDetailsEntity>();
+            list = _context.Bill_Details.Where(t => t.BillId == BillId).ToList<BillDetailsEntity>();
+            return list;
+        }
+        catch (Exception)
+        {
+            return new List<BillDetailsEntity>();
+        }
     }
     [WebMethod]
     public Boolean AddCustomer(CustomerEntity customer)
@@ -190,6 +197,20 @@ public class AdminService : System.Web.Services.WebService
         catch (Exception)
         {
             return false;
+        }
+    }
+    [WebMethod]
+    public List<BillEntity> GetBillList()
+    {
+        try
+        {
+            List<BillEntity> billList = null;
+            billList = _context.Bill.ToList();
+            return billList;
+        }
+        catch (Exception)
+        {
+            return null;
         }
     }
 }
