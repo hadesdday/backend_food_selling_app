@@ -74,6 +74,20 @@ public class AdminService : System.Web.Services.WebService
             return new List<BillDetailsEntity>();
         }
     }
+
+    [WebMethod]
+    public List<CustomerEntity> GetCustomerList()
+    {
+        try
+        {
+            return _context.Customer.ToList<CustomerEntity>();
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
+
     [WebMethod]
     public Boolean AddCustomer(CustomerEntity customer)
     {
@@ -143,12 +157,42 @@ public class AdminService : System.Web.Services.WebService
             return false;
         }
     }
+
+    [WebMethod]
+    public List<VoucherEntity> GetVoucherList()
+    {
+        try
+        {
+            return _context.Voucher.ToList<VoucherEntity>();
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
+
     [WebMethod]
     public Boolean AddVoucher(VoucherEntity voucher)
     {
         try
         {
             _context.Voucher.Add(voucher);
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
+    [WebMethod]
+    public Boolean UpdateVoucher(VoucherEntity voucher)
+    {
+        try
+        {
+            VoucherEntity v = _context.Voucher.Where(t => t.Id.Equals(voucher.Id)).FirstOrDefault<VoucherEntity>();
+            v.Rate = voucher.Rate;
+            _context.SaveChanges();
             return true;
         }
         catch (Exception)
@@ -171,12 +215,43 @@ public class AdminService : System.Web.Services.WebService
             return false;
         }
     }
+
+    [WebMethod]
+    public List<SaleEntity> GetSaleList()
+    {
+        try
+        {
+            return _context.Sale.ToList<SaleEntity>();
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
+
     [WebMethod]
     public Boolean AddSale(SaleEntity sale)
     {
         try
         {
             _context.Sale.Add(sale);
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+    [WebMethod]
+    public Boolean EditSale(SaleEntity sale)
+    {
+        try
+        {
+            SaleEntity s = _context.Sale.Where(t => t.Id == sale.Id).FirstOrDefault<SaleEntity>();
+            s.Rate = sale.Rate;
+            s.EndTime = sale.EndTime;
+            s.Description = sale.Description;
+            _context.SaveChanges();
             return true;
         }
         catch (Exception)
@@ -205,7 +280,35 @@ public class AdminService : System.Web.Services.WebService
         try
         {
             List<BillEntity> billList = null;
-            billList = _context.Bill.ToList();
+            billList = _context.Bill.OrderByDescending(c => c.CreatedAt).ToList();
+            return billList;
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
+    [WebMethod]
+    public List<BillEntity> GetBillListByOldest()
+    {
+        try
+        {
+            List<BillEntity> billList = null;
+            billList = _context.Bill.OrderBy(c => c.CreatedAt).ToList();
+            return billList;
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
+    [WebMethod]
+    public List<BillEntity> GetBillListByCustomerId(int id)
+    {
+        try
+        {
+            List<BillEntity> billList = null;
+            billList = _context.Bill.Where(t => t.CustomerId == id).OrderByDescending(c => c.CreatedAt).ToList();
             return billList;
         }
         catch (Exception)
