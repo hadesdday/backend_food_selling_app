@@ -188,6 +188,7 @@ public class AdminService : System.Web.Services.WebService
         try
         {
             _context.Voucher.Add(voucher);
+            _context.SaveChanges();
             return true;
         }
         catch (Exception)
@@ -237,6 +238,7 @@ public class AdminService : System.Web.Services.WebService
         try
         {
             _context.Sale.Add(sale);
+            _context.SaveChanges();
             return true;
         }
         catch (Exception)
