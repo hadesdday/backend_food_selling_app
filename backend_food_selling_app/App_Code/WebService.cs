@@ -255,66 +255,30 @@ public class WebService : System.Web.Services.WebService
         return cmd.ExecuteNonQuery();
     }
 
-    [WebMethod(EnableSession = true)]
-    public User login(string user, string pass)
-    {
-        string strConn = "server=localhost;database=webservice;user=root;pwd=123456";
-
-        MySqlConnection conn = new MySqlConnection(strConn);
-        conn.Open();
-
-        string query = "select * from webservice.user where username ='" + user + "'and password = '" + pass + "'";
-        MySqlCommand cmd = new MySqlCommand(query, conn);
-        MySqlDataReader da = cmd.ExecuteReader();
-        User u = new User();
-        while (da.Read())
-        {
-            u.username = da.GetString(1);
-            u.password = da.GetString(2);
-            u.email = da.GetString(3);
-            Session["user"] = user;
-            return u;
-        }
-        return null;
-    }
-
-
-    [WebMethod(EnableSession = true)]
-    public string GetUser()
-    {
-        if (Session["user"] == null)
-        {
-            return "No record";
-        }
-        else
-        {
-            return (string)Session["user"];
-        }
-    }
-
-    [WebMethod(EnableSession = true)]
-    public string logout()
-    {
-        if (Session["user"] != null)
-        {
-            return (string)(Session["user"] = null);
-        }
-        return "";
-    }
-
-
     [WebMethod]
-    public int register(string username, string password, string email)
+    public int customerRegister(string name, string address, string phoneNumber)
     {
         string strConn = "server=localhost;database=webservice;user=root;pwd=123456";
         MySqlConnection conn = new MySqlConnection(strConn);
         conn.Open();
 
-        string query = "insert into webservice.user(username, password, email)" +
-            "values ('" + username + "','" + password + "','" + email + "')";
+        string query = "insert into  webservice.customer(name, address, phoneNumber) values ('" + name + "', '" + address + "', '" + phoneNumber + "')";
         MySqlCommand cmd = new MySqlCommand(query, conn);
         return cmd.ExecuteNonQuery();
     }
+
+    [WebMethod]
+    public int userRegister(string username, string password, string email)
+    {
+        string strConn = "server=localhost;database=webservice;user=root;pwd=123456";
+        MySqlConnection conn = new MySqlConnection(strConn);
+        conn.Open();
+
+        string query = "insert into  webservice.user(username, password, email) values ('" + username + "', '" + password + "', '" + email + "')";
+        MySqlCommand cmd = new MySqlCommand(query, conn);
+        return cmd.ExecuteNonQuery();
+    }
+
 
     [WebMethod]
     public User checkUser(string username)
@@ -329,9 +293,9 @@ public class WebService : System.Web.Services.WebService
         while (da.Read())
         {
             User u = new User();
-            u.username = da.GetString(1);
-            u.password = da.GetString(2);
-            u.email = da.GetString(3);
+            u.username = da.GetString(0);
+            u.password = da.GetString(1);
+            u.email = da.GetString(2);
             return u;
         }
         return null;
@@ -345,6 +309,120 @@ public class WebService : System.Web.Services.WebService
         conn.Open();
 
         string query = "update webservice.user set password ='" + newpassword + "'where username ='" + username + "'";
+        MySqlCommand cmd = new MySqlCommand(query, conn);
+        return cmd.ExecuteNonQuery();
+    }
+
+    [WebMethod]
+    public User GetUser(string username)
+    {
+        string strConn = "server=localhost;database=webservice;user=root;pwd=123456";
+        MySqlConnection conn = new MySqlConnection(strConn);
+        conn.Open();
+
+        string query = "select * from webservice.user where username ='" + username + "'";
+        MySqlCommand cmd = new MySqlCommand(query, conn);
+        MySqlDataReader da = cmd.ExecuteReader();
+        User u = new User();
+        while (da.Read())
+        {
+            u.username = da.GetString(1);
+            u.password = da.GetString(2);
+            u.email = da.GetString(3);
+            return u;
+        }
+        return null;
+    }
+
+    [WebMethod]
+    public List<User> getInfo(string user, string pass)
+    {
+        List<User> list = new List<User>();
+        string strConn = "server=localhost;database=webservice;user=root;pwd=123456";
+        MySqlConnection conn = new MySqlConnection(strConn);
+        conn.Open();
+
+        string query = "select webservice.user.username, webservice.user.password, webservice.user.email, " +
+                        "webservice.customer.name, webservice.customer.address, webservice.customer.phoneNumber " +
+                       "from webservice.user, webservice.customer " +
+                       "where webservice.user.idCustomer = webservice.customer.idCustomer " +
+                       "and webservice.user.username = '" + user + "'and webservice.user.password = '" + pass + "'";
+
+        MySqlCommand cmd = new MySqlCommand(query, conn);
+        MySqlDataReader da = cmd.ExecuteReader();
+        User u = new User();
+        while (da.Read())
+        {
+            u.username = da.GetString(0);
+            u.password = da.GetString(1);
+            u.email = da.GetString(2);
+            u.name = da.GetString(3);
+            u.address = da.GetString(4);
+            u.phoneNumber = da.GetString(5);
+            list.Add(u);
+
+        }
+        return list;
+    }
+
+    [WebMethod]
+    public int updateMail(string username, string newEmail)
+    {
+        string strConn = "server=localhost;database=webservice;user=root;pwd=123456";
+        MySqlConnection conn = new MySqlConnection(strConn);
+        conn.Open();
+
+        string query = "update webservice.user, webservice.customer set webservice.user.email = '" + newEmail + "'" +
+                       "where webservice.user.username = '" + username + "'" +
+                       "and webservice.user.idCustomer = webservice.customer.idCustomer";
+
+        MySqlCommand cmd = new MySqlCommand(query, conn);
+        return cmd.ExecuteNonQuery();
+    }
+
+
+    [WebMethod]
+    public int updateName(string username, string newName)
+    {
+        string strConn = "server=localhost;database=webservice;user=root;pwd=123456";
+        MySqlConnection conn = new MySqlConnection(strConn);
+        conn.Open();
+
+        string query = "update webservice.customer, webservice.user set webservice.customer.name = '" + newName + "'" +
+                       "where webservice.user.username = '" + username + "'" +
+                       "and webservice.user.idCustomer = webservice.customer.idCustomer";
+
+        MySqlCommand cmd = new MySqlCommand(query, conn);
+        return cmd.ExecuteNonQuery();
+    }
+
+    [WebMethod]
+    public int updateAddress(string username, string newAddress)
+    {
+        string strConn = "server=localhost;database=webservice;user=root;pwd=123456";
+        MySqlConnection conn = new MySqlConnection(strConn);
+        conn.Open();
+
+        string query = "update webservice.customer, webservice.user set webservice.customer.address = '" + newAddress + "'" +
+                       "where webservice.user.username = '" + username + "'" +
+                       "and webservice.user.idCustomer = webservice.customer.idCustomer";
+
+        MySqlCommand cmd = new MySqlCommand(query, conn);
+        return cmd.ExecuteNonQuery();
+    }
+
+
+    [WebMethod]
+    public int updatePhoneNumber(string username, string newPhone)
+    {
+        string strConn = "server=localhost;database=webservice;user=root;pwd=123456";
+        MySqlConnection conn = new MySqlConnection(strConn);
+        conn.Open();
+
+        string query = "update webservice.customer, webservice.user set webservice.customer.phoneNumber = '" + newPhone + "'" +
+                       "where webservice.user.username = '" + username + "'" +
+                       "and webservice.user.idCustomer = webservice.customer.idCustomer";
+
         MySqlCommand cmd = new MySqlCommand(query, conn);
         return cmd.ExecuteNonQuery();
     }
