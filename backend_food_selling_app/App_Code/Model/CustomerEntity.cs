@@ -19,4 +19,6 @@ public class CustomerEntity
     public string Phone { get; set; }
     [Column("username", TypeName = "varchar(255)")]
     public string Username { get; set; }
+    [Column("createdAt", TypeName = "timestamp")]
+    public string CreatedAt { get; set; }
 }

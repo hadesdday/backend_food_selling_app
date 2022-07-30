@@ -15,4 +15,6 @@ public class VoucherEntity
     public double Rate { get; set; }
     [Column("active", TypeName = "int")]
     public int Active { get; set; }
+    [Column("createdAt", TypeName = "timestamp")]
+    public string CreatedAt { get; set; }
 }

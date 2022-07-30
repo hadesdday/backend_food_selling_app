@@ -80,7 +80,7 @@ public class AdminService : System.Web.Services.WebService
     {
         try
         {
-            return _context.Customer.ToList<CustomerEntity>();
+            return _context.Customer.OrderByDescending(c => c.CreatedAt).ToList<CustomerEntity>();
         }
         catch (Exception)
         {
@@ -126,8 +126,7 @@ public class AdminService : System.Web.Services.WebService
             oldCustomer.Name = customer.Name;
             oldCustomer.Address = customer.Address;
             oldCustomer.Phone = customer.Phone;
-            int rows = _context.SaveChanges();
-            System.Diagnostics.Debug.WriteLine("entries : " + rows);
+            _context.SaveChanges();
             return true;
         }
         catch (Exception)
@@ -163,7 +162,19 @@ public class AdminService : System.Web.Services.WebService
     {
         try
         {
-            return _context.Voucher.ToList<VoucherEntity>();
+            return _context.Voucher.OrderByDescending(t => t.CreatedAt).ToList<VoucherEntity>();
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
+    [WebMethod]
+    public List<VoucherEntity> GetVoucherById(string id)
+    {
+        try
+        {
+            return _context.Voucher.Where(t => t.Id.Equals(id)).OrderByDescending(t => t.CreatedAt).ToList<VoucherEntity>();
         }
         catch (Exception)
         {
@@ -184,31 +195,22 @@ public class AdminService : System.Web.Services.WebService
             return false;
         }
     }
-
     [WebMethod]
-    public Boolean UpdateVoucher(VoucherEntity voucher)
-    {
-        try
-        {
-            VoucherEntity v = _context.Voucher.Where(t => t.Id.Equals(voucher.Id)).FirstOrDefault<VoucherEntity>();
-            v.Rate = voucher.Rate;
-            _context.SaveChanges();
-            return true;
-        }
-        catch (Exception)
-        {
-            return false;
-        }
-    }
-    [WebMethod]
-    public Boolean DeactivateVoucher(string id)
+    public Boolean DeleteVoucher(string id)
     {
         try
         {
             VoucherEntity voucher = _context.Voucher.Where(t => t.Id.Equals(id)).FirstOrDefault<VoucherEntity>();
-            voucher.Active = 0;
-            _context.SaveChanges();
-            return true;
+            if (voucher != null)
+            {
+                _context.Entry(voucher).State = EntityState.Deleted;
+                _context.SaveChanges();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
         catch (Exception)
         {
@@ -221,7 +223,7 @@ public class AdminService : System.Web.Services.WebService
     {
         try
         {
-            return _context.Sale.ToList<SaleEntity>();
+            return _context.Sale.OrderByDescending(t => t.CreatedAt).ToList<SaleEntity>();
         }
         catch (Exception)
         {
@@ -251,6 +253,7 @@ public class AdminService : System.Web.Services.WebService
             s.Rate = sale.Rate;
             s.EndTime = sale.EndTime;
             s.Description = sale.Description;
+            s.Active = sale.Active;
             _context.SaveChanges();
             return true;
         }
@@ -265,7 +268,7 @@ public class AdminService : System.Web.Services.WebService
         try
         {
             SaleEntity sale = _context.Sale.Where(t => t.Id == id).FirstOrDefault<SaleEntity>();
-            sale.Active = 0;
+            sale.Active = 1;
             _context.SaveChanges();
             return true;
         }
@@ -314,6 +317,58 @@ public class AdminService : System.Web.Services.WebService
         catch (Exception)
         {
             return null;
+        }
+    }
+    [WebMethod]
+    public List<CustomerEntity> GetCustomerListByQueries(string key)
+    {
+        key = "%" + key + "%";
+        try
+        {
+            List<CustomerEntity> customerByName = (from m in _context.Customer
+                                                   where EF.Functions.Like(m.Name, key)
+                                                   select m).ToList<CustomerEntity>();
+            List<CustomerEntity> customerById = (from m in _context.Customer
+                                                 where EF.Functions.Like(m.Id.ToString(), key)
+                                                 select m).ToList<CustomerEntity>();
+            List<CustomerEntity> customerByPhone = (from m in _context.Customer
+                                                    where EF.Functions.Like(m.Phone, key)
+                                                    select m).ToList<CustomerEntity>();
+
+            foreach (CustomerEntity c in customerById)
+            {
+                if (!customerByName.Contains(c))
+                {
+                    customerByName.Add(c);
+                }
+            }
+
+            foreach (CustomerEntity c in customerByPhone)
+            {
+                if (!customerByName.Contains(c))
+                {
+                    customerByName.Add(c);
+                }
+            }
+            customerByName.OrderBy(c => c.CreatedAt);
+            return customerByName;
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
+    [WebMethod]
+    public List<SaleEntity> GetSaleListByFoodType(int foodType)
+    {
+        try
+        {
+            List<SaleEntity> list = _context.Sale.Where(t => t.FoodType == foodType).ToList<SaleEntity>();
+            return list;
+        }
+        catch (Exception)
+        {
+            return new List<SaleEntity>();
         }
     }
 }
