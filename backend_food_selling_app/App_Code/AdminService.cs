@@ -592,7 +592,7 @@ public class AdminService : System.Web.Services.WebService
                     "', FoodImage = '" + foodImage +
                     "', FoodDescription = '" + foodDescription +
                     "', FoodPrice = " + foodPrice +
-                    "', FoodTypeId = " + foodTypeId +
+                    ", FoodTypeId = " + foodTypeId +
                     " where FoodId = '" + foodId + "'";
                 Connection connection = new Connection();
                 return connection.exeNonQuery(sql);

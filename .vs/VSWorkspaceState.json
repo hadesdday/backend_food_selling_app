@@ -1,6 +1,11 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\backend_food_selling_app",
+    "\\backend_food_selling_app\\App_Code",
+    "\\backend_food_selling_app\\App_Code\\Area",
+    "\\backend_food_selling_app\\App_Code\\Area\\Identity",
+    "\\backend_food_selling_app\\App_Code\\Area\\Identity\\Data"
   ],
   "SelectedNode": "\\backend_food_selling_app.sln",
   "PreviewInSolutionExplorer": false
