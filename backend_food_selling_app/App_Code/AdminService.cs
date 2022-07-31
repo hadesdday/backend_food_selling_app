@@ -681,4 +681,28 @@ public class AdminService : System.Web.Services.WebService
         connection.closeConnection();
         return avgRate;
     }
+
+    [WebMethod]
+    public List<Food> getSearchedFood(string query)
+    {
+        List<Food> list = new List<Food>();
+        Connection connection = new Connection();
+        string sql = "select * from Food where FoodName like '%" + query + "%';";
+        MySqlDataReader data = connection.getData(sql);
+
+        while (data.Read())
+        {
+            Food food = new Food();
+            food.FoodId = data.GetInt32(0);
+            food.FoodName = data.GetString(1);
+            food.FoodImage = data.GetString(2);
+            food.FoodDescription = data.GetString(3);
+            food.FoodPrice = data.GetInt32(4);
+            food.FoodTypeId = data.GetString(5);
+            list.Add(food);
+        }
+
+        connection.closeConnection();
+        return list;
+    }
 }

@@ -7,6 +7,9 @@ using MySql.Data.MySqlClient;
     {
         private string conn =
             "Server=localhost;Database=dbFoodManager;uid=root;password=hello";
+    /// <summary>
+    /// Someone please replace the above connect string into a different one.
+    /// </summary>
         private MySqlConnection mysqlConnection = null;
 
         public Connection()
