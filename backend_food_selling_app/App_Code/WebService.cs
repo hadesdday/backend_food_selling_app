@@ -1,4 +1,4 @@
-﻿using MySql.Data.MySqlClient;
+﻿//using MySql.Data.MySqlClient;
 using MySqlConnector;
 using System;
 using System.Collections.Generic;
@@ -31,7 +31,7 @@ public class WebService : System.Web.Services.WebService
     public List<Product> getProductInBill(int idBill)
     {
         List<Product> products = new List<Product>();
-        string strConnection = "server=localhost;uid=root;pwd=;database=android2;";
+        string strConnection = "server=localhost;uid=root;pwd=;database=android3;";
 
         MySqlConnection conn = new MySqlConnection(strConnection);
         conn.Open();
@@ -60,7 +60,7 @@ public class WebService : System.Web.Services.WebService
     public List<Bill> getBillList(int status)
     {
         List<Bill> bills = new List<Bill>();
-        string strConnection = "server=localhost;uid=root;pwd=;database=android2;";
+        string strConnection = "server=localhost;uid=root;pwd=;database=android3;";
 
         MySqlConnection conn = new MySqlConnection(strConnection);
         conn.Open();
@@ -89,7 +89,7 @@ public class WebService : System.Web.Services.WebService
     [WebMethod]
     public int deleteIteminBill(int billId, int foodId)
     {
-        string strConnection = "server=localhost;uid=root;pwd=;database=android2;";
+        string strConnection = "server=localhost;uid=root;pwd=;database=android3;";
 
         MySqlConnection conn = new MySqlConnection(strConnection);
         conn.Open();
@@ -109,7 +109,7 @@ public class WebService : System.Web.Services.WebService
     public int changeQuantityProduct(int billId, int foodId,int amount)
     {
         List<Bill> bills = new List<Bill>();
-        string strConnection = "server=localhost;uid=root;pwd=;database=android2;";
+        string strConnection = "server=localhost;uid=root;pwd=;database=android3;";
 
         MySqlConnection conn = new MySqlConnection(strConnection);
         conn.Open();
@@ -130,7 +130,7 @@ public class WebService : System.Web.Services.WebService
     [WebMethod]
     public int deleteBill(int billID)
     {
-        string strConnection = "server=localhost;uid=root;pwd=;database=android2;";
+        string strConnection = "server=localhost;uid=root;pwd=;database=android3;";
 
         MySqlConnection conn = new MySqlConnection(strConnection);
         conn.Open();
@@ -145,14 +145,15 @@ public class WebService : System.Web.Services.WebService
         return cmd.ExecuteNonQuery();
     }
     [WebMethod]
-    public int insertBill(string name, int billPrice, string phoneNumber,string address,string payment)
+    public int insertBill(string name, int billPrice, string phoneNumber,string address,string payment,string username)
     {
         int count = 0;
-        string strConnection = "server=localhost;uid=root;pwd=;database=android2;";
+        string strConnection = "server=localhost;uid=root;pwd=;database=android3;";
 
         MySqlConnection conn = new MySqlConnection(strConnection);
         conn.Open();
         string sql2 = "insert into customer (name,address,phone_number) values(@name,@address,@phone)";
+        
         MySqlCommand cmd2 = conn.CreateCommand();
         MySqlParameter nameC = new MySqlParameter("@name", MySqlDbType.Int32);
         nameC.Value = name;
@@ -160,10 +161,19 @@ public class WebService : System.Web.Services.WebService
         addr.Value = address;
         MySqlParameter phone = new MySqlParameter("@phone", MySqlDbType.Int32);
         phone.Value = phoneNumber;
+       
+        if (username != "")
+        {
+            MySqlParameter user = new MySqlParameter("@username", MySqlDbType.Int32);
+            user.Value = username;
+            sql2 = "insert into customer (name,address,phone_number,username) values(@name,@address,@phone,@username)";
+            cmd2.Parameters.Add(user);
+        }
         cmd2.CommandText = sql2;
         cmd2.Parameters.Add(nameC);
         cmd2.Parameters.Add(addr);
         cmd2.Parameters.Add(phone);
+       
         cmd2.ExecuteNonQuery();
         long customer_id = cmd2.LastInsertedId;
 
@@ -194,7 +204,7 @@ public class WebService : System.Web.Services.WebService
     [WebMethod]
     public int addBillDetail(int billId,int foodId,int amount)
     {
-        string strConnection = "server=localhost;uid=root;pwd=;database=android2;";
+        string strConnection = "server=localhost;uid=root;pwd=;database=android3;";
         MySqlConnection conn = new MySqlConnection(strConnection);
         conn.Open();
         string sql = "insert into bill_details (bill_id,food_id,amount) values (@billId,@foodId,@amount);";
@@ -216,7 +226,7 @@ public class WebService : System.Web.Services.WebService
     {
         double rate = 0;
         int count = 0;
-        string strConnection = "server=localhost;uid=root;pwd=;database=android2;";
+        string strConnection = "server=localhost;uid=root;pwd=;database=android3;";
 
         MySqlConnection conn = new MySqlConnection(strConnection);
         conn.Open();
@@ -242,7 +252,7 @@ public class WebService : System.Web.Services.WebService
     [WebMethod]
     public int usedVoucher(string id_voucher)
     {
-        string strConnection = "server=localhost;uid=root;pwd=;database=android2;";
+        string strConnection = "server=localhost;uid=root;pwd=;database=android3;";
 
         MySqlConnection conn = new MySqlConnection(strConnection);
         conn.Open();
@@ -284,11 +294,12 @@ public class WebService : System.Web.Services.WebService
     [WebMethod]
     public User checkUser(string username)
     {
-        string strConn = "server=localhost;database=webservice;user=root;pwd=123456";
+        //string strConn = "server=localhost;database=webservice;user=root;pwd=123456";
+        string strConn = "server = localhost; uid = root; pwd =; database = android3; ";
         MySqlConnection conn = new MySqlConnection(strConn);
         conn.Open();
 
-        string query = "select * from webservice.user where username = '" + username + "'";
+        string query = "select * from user where username = '" + username + "'";
         MySqlCommand cmd = new MySqlCommand(query, conn);
         MySqlDataReader da = cmd.ExecuteReader();
         while (da.Read())
@@ -339,15 +350,21 @@ public class WebService : System.Web.Services.WebService
     public List<User> getInfo(string user, string pass)
     {
         List<User> list = new List<User>();
-        string strConn = "server=localhost;database=webservice;user=root;pwd=123456";
+        //string strConn = "server=localhost;database=webservice;user=root;pwd=123456";
+        string strConn = "server = localhost; uid = root; pwd =; database = android3; ";
         MySqlConnection conn = new MySqlConnection(strConn);
         conn.Open();
 
-        string query = "select webservice.user.username, webservice.user.password, webservice.user.email, " +
-                        "webservice.customer.name, webservice.customer.address, webservice.customer.phoneNumber " +
-                       "from webservice.user, webservice.customer " +
-                       "where webservice.user.idCustomer = webservice.customer.idCustomer " +
-                       "and webservice.user.username = '" + user + "'and webservice.user.password = '" + pass + "'";
+        //string query = "select webservice.user.username, webservice.user.password, webservice.user.email, " +
+        //                "webservice.customer.name, webservice.customer.address, webservice.customer.phoneNumber " +
+        //               "from webservice.user, webservice.customer " +
+        //               "where webservice.user.idCustomer = webservice.customer.idCustomer " +
+        //               "and webservice.user.username = '" + user + "'and webservice.user.password = '" + pass + "'";
+        string query = "select user.username, user.password, user.email, " +
+                        "customer.name, customer.address, customer.phone_number " +
+                       "from user, customer " +
+                       "where user.username = customer.username " +
+                       "and user.username = '" + user + "'and user.password = '" + pass + "'";
 
         MySqlCommand cmd = new MySqlCommand(query, conn);
         MySqlDataReader da = cmd.ExecuteReader();
@@ -437,169 +454,169 @@ public class WebService : System.Web.Services.WebService
         return count;
     }
 
-    [WebMethod]
-    public List<FoodType> getFoodType()
-    {
-        List<FoodType> list = new List<FoodType>();
-        Connection connection = new Connection();
-        MySqlDataReader data = connection.getData("select * from FoodType");
+    //[WebMethod]
+    //public List<FoodType> getFoodType()
+    //{
+    //    List<FoodType> list = new List<FoodType>();
+    //    Connection connection = new Connection();
+    //    MySqlDataReader data = connection.getData("select * from FoodType");
 
-        while (data.Read())
-        {
-            FoodType foodType = new FoodType();
-            foodType.FoodTypeId = data.GetInt32(0);
-            foodType.FoodTypeName = data.GetString(1);
-            list.Add(foodType);
-        }
+    //    while (data.Read())
+    //    {
+    //        FoodType foodType = new FoodType();
+    //        foodType.FoodTypeId = data.GetInt32(0);
+    //        foodType.FoodTypeName = data.GetString(1);
+    //        list.Add(foodType);
+    //    }
 
-        connection.closeConnection();
-        return list;
-    }
+    //    connection.closeConnection();
+    //    return list;
+    //}
 
-    [WebMethod]
-    public int getNumberOfFood()
-    {
-        Connection connection = new Connection();
-        int count = connection.getCount("select count(*) from Food");
-        connection.closeConnection();
-        return count;
-    }
+    //[WebMethod]
+    //public int getNumberOfFood()
+    //{
+    //    Connection connection = new Connection();
+    //    int count = connection.getCount("select count(*) from Food");
+    //    connection.closeConnection();
+    //    return count;
+    //}
 
-    [WebMethod]
-    public List<Food> getFood()
-    {
-        List<Food> list = new List<Food>();
-        Connection connection = new Connection();
-        MySqlDataReader data = connection.getData("select * from Food");
+    //[WebMethod]
+    //public List<Food> getFood()
+    //{
+    //    List<Food> list = new List<Food>();
+    //    Connection connection = new Connection();
+    //    MySqlDataReader data = connection.getData("select * from Food");
 
-        while (data.Read())
-        {
-            Food food = new Food();
-            food.FoodId = data.GetInt32(0);
-            food.FoodName = data.GetString(1);
-            food.FoodImage = data.GetString(2);
-            food.FoodDescription = data.GetString(3);
-            food.FoodPrice = data.GetInt32(4);
-            food.FoodTypeId = data.GetString(5);
-            list.Add(food);
-        }
+    //    while (data.Read())
+    //    {
+    //        Food food = new Food();
+    //        food.FoodId = data.GetInt32(0);
+    //        food.FoodName = data.GetString(1);
+    //        food.FoodImage = data.GetString(2);
+    //        food.FoodDescription = data.GetString(3);
+    //        food.FoodPrice = data.GetInt32(4);
+    //        food.FoodTypeId = data.GetString(5);
+    //        list.Add(food);
+    //    }
 
-        connection.closeConnection();
-        return list;
-    }
+    //    connection.closeConnection();
+    //    return list;
+    //}
 
-    [WebMethod]
-    public List<Food> getFoodByFoodType(int foodTypeId)
-    {
-        List<Food> list = new List<Food>();
-        Connection connection = new Connection();
-        MySqlDataReader data = connection.getData("select * from Food where FoodTypeId = " + foodTypeId);
+    //[WebMethod]
+    //public List<Food> getFoodByFoodType(int foodTypeId)
+    //{
+    //    List<Food> list = new List<Food>();
+    //    Connection connection = new Connection();
+    //    MySqlDataReader data = connection.getData("select * from Food where FoodTypeId = " + foodTypeId);
 
-        while (data.Read())
-        {
-            Food food = new Food();
-            food.FoodId = data.GetInt32(0);
-            food.FoodName = data.GetString(1);
-            food.FoodImage = data.GetString(2);
-            food.FoodDescription = data.GetString(3);
-            food.FoodPrice = data.GetInt32(4);
-            food.FoodTypeId = data.GetString(5);
-            list.Add(food);
-        }
+    //    while (data.Read())
+    //    {
+    //        Food food = new Food();
+    //        food.FoodId = data.GetInt32(0);
+    //        food.FoodName = data.GetString(1);
+    //        food.FoodImage = data.GetString(2);
+    //        food.FoodDescription = data.GetString(3);
+    //        food.FoodPrice = data.GetInt32(4);
+    //        food.FoodTypeId = data.GetString(5);
+    //        list.Add(food);
+    //    }
 
-        connection.closeConnection();
-        return list;
-    }
+    //    connection.closeConnection();
+    //    return list;
+    //}
 
-    [WebMethod]
-    public Food getFoodByFoodId(int foodId)
-    {
-        Food food = new Food();
-        Connection connection = new Connection();
-        MySqlDataReader data = connection.getData("select * from Food where FoodId = " + foodId);
+    //[WebMethod]
+    //public Food getFoodByFoodId(int foodId)
+    //{
+    //    Food food = new Food();
+    //    Connection connection = new Connection();
+    //    MySqlDataReader data = connection.getData("select * from Food where FoodId = " + foodId);
 
-        while (data.Read())
-        {
-            food.FoodId = data.GetInt32(0);
-            food.FoodName = data.GetString(1);
-            food.FoodImage = data.GetString(2);
-            food.FoodDescription = data.GetString(3);
-            food.FoodPrice = data.GetInt32(4);
-            food.FoodTypeId = data.GetString(5);
-        }
+    //    while (data.Read())
+    //    {
+    //        food.FoodId = data.GetInt32(0);
+    //        food.FoodName = data.GetString(1);
+    //        food.FoodImage = data.GetString(2);
+    //        food.FoodDescription = data.GetString(3);
+    //        food.FoodPrice = data.GetInt32(4);
+    //        food.FoodTypeId = data.GetString(5);
+    //    }
 
-        connection.closeConnection();
-        return food;
-    }
+    //    connection.closeConnection();
+    //    return food;
+    //}
 
-    public List<FoodRating> getFoodRate()
-    {
-        List<FoodRating> list = new List<FoodRating>();
-        Connection connection = new Connection();
-        MySqlDataReader data = connection.getData("select * from FoodRating");
+    //public List<FoodRating> getFoodRate()
+    //{
+    //    List<FoodRating> list = new List<FoodRating>();
+    //    Connection connection = new Connection();
+    //    MySqlDataReader data = connection.getData("select * from FoodRating");
 
-        while (data.Read())
-        {
-            FoodRating foodRating = new FoodRating();
-            foodRating.RateId = data.GetInt32(0);
-            foodRating.FoodId = data.GetString(1);
-            foodRating.FoodRate = data.GetDouble(2);
-            foodRating.FoodComment = data.GetString(3);
-            list.Add(foodRating);
-        }
+    //    while (data.Read())
+    //    {
+    //        FoodRating foodRating = new FoodRating();
+    //        foodRating.RateId = data.GetInt32(0);
+    //        foodRating.FoodId = data.GetString(1);
+    //        foodRating.FoodRate = data.GetDouble(2);
+    //        foodRating.FoodComment = data.GetString(3);
+    //        list.Add(foodRating);
+    //    }
 
-        connection.closeConnection();
-        return list;
-    }
+    //    connection.closeConnection();
+    //    return list;
+    //}
 
-    [WebMethod]
-    public List<FoodRating> getFoodRateByFoodId(int foodId)
-    {
-        List<FoodRating> list = new List<FoodRating>();
-        Connection connection = new Connection();
-        MySqlDataReader data = connection.getData("select * from FoodRating " +
-            "where FoodId = '" + foodId + "';");
+    //[WebMethod]
+    //public List<FoodRating> getFoodRateByFoodId(int foodId)
+    //{
+    //    List<FoodRating> list = new List<FoodRating>();
+    //    Connection connection = new Connection();
+    //    MySqlDataReader data = connection.getData("select * from FoodRating " +
+    //        "where FoodId = '" + foodId + "';");
 
-        while (data.Read())
-        {
-            FoodRating foodRating = new FoodRating();
-            foodRating.RateId = data.GetInt32(0);
-            foodRating.FoodId = data.GetString(1);
-            foodRating.FoodRate = data.GetDouble(2);
-            foodRating.FoodComment = data.GetString(3);
-            list.Add(foodRating);
-        }
+    //    while (data.Read())
+    //    {
+    //        FoodRating foodRating = new FoodRating();
+    //        foodRating.RateId = data.GetInt32(0);
+    //        foodRating.FoodId = data.GetString(1);
+    //        foodRating.FoodRate = data.GetDouble(2);
+    //        foodRating.FoodComment = data.GetString(3);
+    //        list.Add(foodRating);
+    //    }
 
-        connection.closeConnection();
-        return list;
-    }
+    //    connection.closeConnection();
+    //    return list;
+    //}
 
-    [WebMethod]
-    public int addFoodRating(int foodId, float foodRate, string foodComment)
-    {
-        string sql = "insert into FoodRating(FoodId, FoodRate, FoodComment) " +
-            "values ('" + foodId + "', " + foodRate + ", '" + foodComment + "');";
-        Connection connection = new Connection();
-        return connection.exeNonQuery(sql);
-    }
+    //[WebMethod]
+    //public int addFoodRating(int foodId, float foodRate, string foodComment)
+    //{
+    //    string sql = "insert into FoodRating(FoodId, FoodRate, FoodComment) " +
+    //        "values ('" + foodId + "', " + foodRate + ", '" + foodComment + "');";
+    //    Connection connection = new Connection();
+    //    return connection.exeNonQuery(sql);
+    //}
 
-    [WebMethod]
-    public int delFoodRating(int rateId)
-    {
-        List<FoodRating> foodRateList = getFoodRate();
+    //[WebMethod]
+    //public int delFoodRating(int rateId)
+    //{
+    //    List<FoodRating> foodRateList = getFoodRate();
 
-        foreach (FoodRating ft in foodRateList)
-        {
-            if (ft.RateId == rateId)
-            {
-                string sql = "delete from FoodRating where RateId = '" + rateId + "'";
-                Connection connection = new Connection();
-                return connection.exeNonQuery(sql);
-            }
-        }
+    //    foreach (FoodRating ft in foodRateList)
+    //    {
+    //        if (ft.RateId == rateId)
+    //        {
+    //            string sql = "delete from FoodRating where RateId = '" + rateId + "'";
+    //            Connection connection = new Connection();
+    //            return connection.exeNonQuery(sql);
+    //        }
+    //    }
 
-        return -1;
-    }
+    //    return -1;
+    //}
 
     [WebMethod]
     public double avgFoodRate(int foodId)
