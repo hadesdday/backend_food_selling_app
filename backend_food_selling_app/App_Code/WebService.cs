@@ -1,5 +1,4 @@
-﻿//using MySql.Data.MySqlClient;
-using MySql.Data.MySqlClient;
+﻿using MySql.Data.MySqlClient;
 //using MySqlConnector;
 using System;
 using System.Collections.Generic;
@@ -270,7 +269,7 @@ public class WebService : System.Web.Services.WebService
     [WebMethod]
     public int customerRegister(string name, string address, string phoneNumber, string username)
     {
-        string strConn = "server=localhost;database=webservice;user=root;pwd=123456";
+        string strConn = "server=localhost;uid=root;pwd=;database=android3;";
         MySqlConnection conn = new MySqlConnection(strConn);
         conn.Open();
 
@@ -282,7 +281,7 @@ public class WebService : System.Web.Services.WebService
     [WebMethod]
     public int userRegister(string username, string password, string email)
     {
-        string strConn = "server=localhost;database=webservice;user=root;pwd=123456";
+        string strConn = "server=localhost;uid=root;pwd=;database=android3;";
         MySqlConnection conn = new MySqlConnection(strConn);
         conn.Open();
 
@@ -295,7 +294,7 @@ public class WebService : System.Web.Services.WebService
     [WebMethod]
     public User checkUser(string username)
     {
-        string strConn = "server=localhost;database=webservice;user=root;pwd=123456";
+        string strConn = "server=localhost;uid=root;pwd=;database=android3;";
         MySqlConnection conn = new MySqlConnection(strConn);
         conn.Open();
 
@@ -316,7 +315,7 @@ public class WebService : System.Web.Services.WebService
     [WebMethod]
     public int changePassword(string username, string newpassword)
     {
-        string strConn = "server=localhost;database=webservice;user=root;pwd=123456";
+        string strConn = "server=localhost;uid=root;pwd=;database=android3;";
         MySqlConnection conn = new MySqlConnection(strConn);
         conn.Open();
 
@@ -329,7 +328,7 @@ public class WebService : System.Web.Services.WebService
     public List<User> GetUser(string user, string pass)
     {
         List<User> list = new List<User>();
-        string strConn = "server=localhost;database=webservice;user=root;pwd=123456";
+        string strConn = "server=localhost;uid=root;pwd=;database=android3;";
         MySqlConnection conn = new MySqlConnection(strConn);
         conn.Open();
 
@@ -359,7 +358,7 @@ public class WebService : System.Web.Services.WebService
     {
         List<User> list = new List<User>();
         //string strConn = "server=localhost;database=webservice;user=root;pwd=123456";
-        string strConn = "server = localhost; uid = root; pwd =; database = android3; ";
+        string strConn = "server=localhost;uid=root;pwd=;database=android3; ";
         MySqlConnection conn = new MySqlConnection(strConn);
         conn.Open();
 
@@ -394,7 +393,7 @@ public class WebService : System.Web.Services.WebService
     [WebMethod]
     public int updateMail(string username, string newEmail)
     {
-        string strConn = "server=localhost;database=webservice;user=root;pwd=123456";
+        string strConn = "server=localhost;uid=root;pwd=;database=android3;";
         MySqlConnection conn = new MySqlConnection(strConn);
         conn.Open();
 
@@ -410,7 +409,7 @@ public class WebService : System.Web.Services.WebService
     [WebMethod]
     public int updateName(string username, string newName)
     {
-        string strConn = "server=localhost;database=webservice;user=root;pwd=123456";
+        string strConn = "server=localhost;uid=root;pwd=;database=android3;";
         MySqlConnection conn = new MySqlConnection(strConn);
         conn.Open();
 
@@ -425,7 +424,7 @@ public class WebService : System.Web.Services.WebService
     [WebMethod]
     public int updateAddress(string username, string newAddress)
     {
-        string strConn = "server=localhost;database=webservice;user=root;pwd=123456";
+        string strConn = "server=localhost;uid=root;pwd=;database=android3;";
         MySqlConnection conn = new MySqlConnection(strConn);
         conn.Open();
 
@@ -441,7 +440,7 @@ public class WebService : System.Web.Services.WebService
     [WebMethod]
     public int updatePhoneNumber(string username, string newPhone)
     {
-        string strConn = "server=localhost;database=webservice;user=root;pwd=123456";
+        string strConn = "server=localhost;uid=root;pwd=;database=android3;";
         MySqlConnection conn = new MySqlConnection(strConn);
         conn.Open();
 
