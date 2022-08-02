@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿//using Microsoft.EntityFrameworkCore;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
@@ -379,7 +379,7 @@ public class AdminService : System.Web.Services.WebService
     public int getNumberOfFoodType()
     {
         Connection connection = new Connection();
-        int count = connection.getCount("select count(*) from FoodType");
+        int count = connection.getCount("select count(*) from food_type");
         connection.closeConnection();
         return count;
     }
@@ -389,13 +389,13 @@ public class AdminService : System.Web.Services.WebService
     {
         List<FoodType> list = new List<FoodType>();
         Connection connection = new Connection();
-        MySqlDataReader data = connection.getData("select * from FoodType");
+        MySqlDataReader data = connection.getData("select * from food_type");
 
         while (data.Read())
         {
             FoodType foodType = new FoodType();
-            foodType.FoodTypeId = data.GetInt32(0);
-            foodType.FoodTypeName = data.GetString(1);
+            foodType.id = data.GetInt32(0);
+            foodType.name = data.GetString(1);
             list.Add(foodType);
         }
 
@@ -410,60 +410,22 @@ public class AdminService : System.Web.Services.WebService
 
         foreach (FoodType ft in foodTypeList)
         {
-            if (ft.FoodTypeName.Equals(foodTypeName))
+            if (ft.name.Equals(foodTypeName))
             {
                 return -1;
             }
         }
 
-        string sql = "insert into FoodType(FoodTypeName) values ('" + foodTypeName + "')";
+        string sql = "insert into food_type(name) values ('" + foodTypeName + "')";
         Connection connection = new Connection();
         return connection.exeNonQuery(sql);
     }
-
-    [WebMethod]
-    public int delFoodType(int foodTypeId)
-    {
-        List<FoodType> foodTypeList = getFoodType();
-
-        foreach (FoodType ft in foodTypeList)
-        {
-            if (ft.FoodTypeId == foodTypeId)
-            {
-                string sql = "delete from FoodType where FoodTypeId = '" + foodTypeId + "'";
-                Connection connection = new Connection();
-                return connection.exeNonQuery(sql);
-            }
-        }
-
-        return -1;
-    }
-
-    [WebMethod]
-    public int updateFoodType(int foodTypeId, string foodTypeName)
-    {
-        List<FoodType> foodTypeList = getFoodType();
-
-        foreach (FoodType ft in foodTypeList)
-        {
-            if (ft.FoodTypeId == foodTypeId)
-            {
-                string sql = "update FoodType" +
-                    " set FoodTypeName = '" + foodTypeName +
-                    "' where FoodTypeId = '" + foodTypeId + "'";
-                Connection connection = new Connection();
-                return connection.exeNonQuery(sql);
-            }
-        }
-
-        return -1;
-    }
-
+    
     [WebMethod]
     public int getNumberOfFood()
     {
         Connection connection = new Connection();
-        int count = connection.getCount("select count(*) from Food");
+        int count = connection.getCount("select count(*) from food");
         connection.closeConnection();
         return count;
     }
@@ -473,17 +435,17 @@ public class AdminService : System.Web.Services.WebService
     {
         List<Food> list = new List<Food>();
         Connection connection = new Connection();
-        MySqlDataReader data = connection.getData("select * from Food");
+        MySqlDataReader data = connection.getData("select * from food");
 
         while (data.Read())
         {
             Food food = new Food();
-            food.FoodId = data.GetInt32(0);
-            food.FoodName = data.GetString(1);
-            food.FoodImage = data.GetString(2);
-            food.FoodDescription = data.GetString(3);
-            food.FoodPrice = data.GetInt32(4);
-            food.FoodTypeId = data.GetString(5);
+            food.id = data.GetInt32(0);
+            food.food_type = data.GetInt32(1);
+            food.name = data.GetString(2);
+            food.image_url = data.GetString(3);
+            food.description = data.GetString(4);
+            food.price = data.GetDouble(5);
             list.Add(food);
         }
 
@@ -496,17 +458,17 @@ public class AdminService : System.Web.Services.WebService
     {
         List<Food> list = new List<Food>();
         Connection connection = new Connection();
-        MySqlDataReader data = connection.getData("select * from Food where FoodTypeId = " + foodTypeId);
+        MySqlDataReader data = connection.getData("select * from food where food_type = " + foodTypeId);
 
         while (data.Read())
         {
             Food food = new Food();
-            food.FoodId = data.GetInt32(0);
-            food.FoodName = data.GetString(1);
-            food.FoodImage = data.GetString(2);
-            food.FoodDescription = data.GetString(3);
-            food.FoodPrice = data.GetInt32(4);
-            food.FoodTypeId = data.GetString(5);
+            food.id = data.GetInt32(0);
+            food.food_type = data.GetInt32(1);
+            food.name = data.GetString(2);
+            food.image_url = data.GetString(3);
+            food.description = data.GetString(4);
+            food.price = data.GetDouble(5);
             list.Add(food);
         }
 
@@ -519,16 +481,16 @@ public class AdminService : System.Web.Services.WebService
     {
         Food food = new Food();
         Connection connection = new Connection();
-        MySqlDataReader data = connection.getData("select * from Food where FoodId = " + foodId);
+        MySqlDataReader data = connection.getData("select * from food where id = " + foodId);
 
         while (data.Read())
         {
-            food.FoodId = data.GetInt32(0);
-            food.FoodName = data.GetString(1);
-            food.FoodImage = data.GetString(2);
-            food.FoodDescription = data.GetString(3);
-            food.FoodPrice = data.GetInt32(4);
-            food.FoodTypeId = data.GetString(5);
+            food.id = data.GetInt32(0);
+            food.food_type = data.GetInt32(1);
+            food.name = data.GetString(2);
+            food.image_url = data.GetString(3);
+            food.description = data.GetString(4);
+            food.price = data.GetDouble(5);
         }
 
         connection.closeConnection();
@@ -536,26 +498,21 @@ public class AdminService : System.Web.Services.WebService
     }
 
     [WebMethod]
-    public int addFood(string foodName, string foodImage, string foodDescription,
-        int foodPrice, int foodTypeId)
+    public int addFood(string foodName, int foodTypeId, string foodImage, string foodDescription, int foodPrice)
     {
         List<Food> foodList = getFood();
 
         foreach (Food ft in foodList)
         {
-            if (ft.FoodName == foodName)
+            if (ft.name == foodName)
             {
                 return -1;
             }
         }
 
-        string sql = "insert into Food(FoodName, FoodImage, FoodDescription, " +
-            "FoodPrice, FoodTypeId) values ('" +
-            foodName + "', '" +
-            foodImage + "', '" +
-            foodDescription + "', " +
-            foodPrice + ", '" +
-            foodTypeId + "')";
+        string sql = "insert into food(name, food_type, image_url, description, " +
+            "price) values ('" + foodName + "', '" + foodTypeId + "', '" +
+            foodImage + "', '" + foodDescription + "', '" + foodPrice + "')";
         Connection connection = new Connection();
         return connection.exeNonQuery(sql);
     }
@@ -567,9 +524,9 @@ public class AdminService : System.Web.Services.WebService
 
         foreach (Food ft in foodList)
         {
-            if (ft.FoodId == foodId)
+            if (ft.id == foodId)
             {
-                string sql = "delete from Food where FoodId = '" + foodId + "'";
+                string sql = "delete from food where id = '" + foodId + "'";
                 Connection connection = new Connection();
                 return connection.exeNonQuery(sql);
             }
@@ -579,21 +536,21 @@ public class AdminService : System.Web.Services.WebService
     }
 
     [WebMethod]
-    public int updateFood(int foodId, string foodName, string foodImage, string foodDescription, int foodPrice, int foodTypeId)
+    public int updateFood(int foodId, int foodTypeId, string foodName, string foodImage, string foodDescription, int foodPrice)
     {
         List<Food> foodList = getFood();
 
         foreach (Food ft in foodList)
         {
-            if (ft.FoodId == foodId)
+            if (ft.id == foodId)
             {
-                string sql = "update Food" +
-                    " set FoodName = '" + foodName +
-                    "', FoodImage = '" + foodImage +
-                    "', FoodDescription = '" + foodDescription +
-                    "', FoodPrice = " + foodPrice +
-                    ", FoodTypeId = " + foodTypeId +
-                    " where FoodId = '" + foodId + "'";
+                string sql = "update food set " +
+                    "food_type = '" + foodTypeId + "', " +
+                    "name = '" + foodName + "', " +
+                    "image_url = '" + foodImage + "', " +
+                    "description = " + foodDescription + ", " +
+                    "price = " + foodPrice + " " +
+                    "where id = '" + foodId + "'";
                 Connection connection = new Connection();
                 return connection.exeNonQuery(sql);
             }
@@ -607,15 +564,15 @@ public class AdminService : System.Web.Services.WebService
     {
         List<FoodRating> list = new List<FoodRating>();
         Connection connection = new Connection();
-        MySqlDataReader data = connection.getData("select * from FoodRating");
+        MySqlDataReader data = connection.getData("select * from review");
 
         while (data.Read())
         {
             FoodRating foodRating = new FoodRating();
-            foodRating.RateId = data.GetInt32(0);
-            foodRating.FoodId = data.GetString(1);
-            foodRating.FoodRate = data.GetDouble(2);
-            foodRating.FoodComment = data.GetString(3);
+            foodRating.id = data.GetInt32(0);
+            foodRating.food_id = data.GetInt32(1);
+            foodRating.rate = data.GetDouble(2);
+            foodRating.comment = data.GetString(3);
             list.Add(foodRating);
         }
 
@@ -628,16 +585,16 @@ public class AdminService : System.Web.Services.WebService
     {
         List<FoodRating> list = new List<FoodRating>();
         Connection connection = new Connection();
-        MySqlDataReader data = connection.getData("select * from FoodRating " +
-            "where FoodId = '" + foodId + "';");
+        MySqlDataReader data = connection.getData("select * from review " +
+            "where id = '" + foodId + "';");
 
         while (data.Read())
         {
             FoodRating foodRating = new FoodRating();
-            foodRating.RateId = data.GetInt32(0);
-            foodRating.FoodId = data.GetString(1);
-            foodRating.FoodRate = data.GetDouble(2);
-            foodRating.FoodComment = data.GetString(3);
+            foodRating.id = data.GetInt32(0);
+            foodRating.food_id = data.GetInt32(1);
+            foodRating.rate = data.GetDouble(2);
+            foodRating.comment = data.GetString(3);
             list.Add(foodRating);
         }
 
@@ -648,7 +605,7 @@ public class AdminService : System.Web.Services.WebService
     [WebMethod]
     public int addFoodRating(int foodId, float foodRate, string foodComment)
     {
-        string sql = "insert into FoodRating(FoodId, FoodRate, FoodComment) " +
+        string sql = "insert into review(food_id, rate, comment) " +
             "values ('" + foodId + "', " + foodRate + ", '" + foodComment + "');";
         Connection connection = new Connection();
         return connection.exeNonQuery(sql);
@@ -661,9 +618,9 @@ public class AdminService : System.Web.Services.WebService
 
         foreach (FoodRating ft in foodRateList)
         {
-            if (ft.RateId == rateId)
+            if (ft.id == rateId)
             {
-                string sql = "delete from FoodRating where RateId = '" + rateId + "'";
+                string sql = "delete from review where id = '" + rateId + "'";
                 Connection connection = new Connection();
                 return connection.exeNonQuery(sql);
             }
@@ -676,8 +633,8 @@ public class AdminService : System.Web.Services.WebService
     public double avgFoodRate(int foodId)
     {
         Connection connection = new Connection();
-        double avgRate = connection.getDouble("select avg(FoodRate) AvgRate from FoodRating " +
-            "where FoodId = '" + foodId + "';");
+        double avgRate = connection.getDouble("select avg(review) AvgRate from review " +
+            "where id = '" + foodId + "';");
         connection.closeConnection();
         return avgRate;
     }
@@ -687,18 +644,18 @@ public class AdminService : System.Web.Services.WebService
     {
         List<Food> list = new List<Food>();
         Connection connection = new Connection();
-        string sql = "select * from Food where FoodName like '%" + query + "%';";
+        string sql = "select * from food where name like '%" + query + "%';";
         MySqlDataReader data = connection.getData(sql);
 
         while (data.Read())
         {
             Food food = new Food();
-            food.FoodId = data.GetInt32(0);
-            food.FoodName = data.GetString(1);
-            food.FoodImage = data.GetString(2);
-            food.FoodDescription = data.GetString(3);
-            food.FoodPrice = data.GetInt32(4);
-            food.FoodTypeId = data.GetString(5);
+            food.id = data.GetInt32(0);
+            food.food_type = data.GetInt32(1);
+            food.name = data.GetString(2);
+            food.image_url = data.GetString(3);
+            food.description = data.GetString(4);
+            food.price = data.GetDouble(5);
             list.Add(food);
         }
 

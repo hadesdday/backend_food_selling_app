@@ -4,14 +4,14 @@ using System.Linq;
 using System.Web;
 
 
-    [Serializable]
-    public class Food
-    {
-        public int FoodId { get; set; }
-        public string FoodName { get; set; }
-        public string FoodImage { get; set; }
-        public string FoodDescription { get; set; }
-        public int FoodPrice { get; set; }
-        public string FoodTypeId { get; set; }
+[Serializable]
+public class Food
+{
+    public int id { get; set; }
+    public int food_type { get; set; }
+    public string name { get; set; }
+    public string image_url { get; set; }
+    public string description { get; set; }
+    public double price { get; set; }
 
     }
