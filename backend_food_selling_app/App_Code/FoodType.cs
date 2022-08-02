@@ -4,9 +4,10 @@ using System.Linq;
 using System.Web;
 
 
-    [Serializable]
-    public class FoodType
-    {
-        public int FoodTypeId { get; set; }
-        public string FoodTypeName { get; set; }
-    }
+[Serializable]
+public class FoodType
+{
+    public int id { get; set; }
+    public string name { get; set; }
+
+}

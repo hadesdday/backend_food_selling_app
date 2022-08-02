@@ -4,11 +4,11 @@ using System.Linq;
 using System.Web;
 
 
-    [Serializable]
-    public class FoodRating
-    {
-        public int RateId { get; set; }
-        public string FoodId { get; set; }
-        public double FoodRate { get; set; }
-        public string FoodComment { get; set; }
-    }
+[Serializable]
+public class FoodRating
+{
+    public int id { get; set; }
+    public int food_id { get; set; }
+    public double rate { get; set; }
+    public string comment { get; set; }
+}

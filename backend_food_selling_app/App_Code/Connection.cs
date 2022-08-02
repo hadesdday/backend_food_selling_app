@@ -6,10 +6,7 @@ using MySql.Data.MySqlClient;
     public class Connection
     {
         private string conn =
-            "Server=localhost;Database=dbFoodManager;uid=root;password=hello";
-    /// <summary>
-    /// Someone please replace the above connect string into a different one.
-    /// </summary>
+            "Server=localhost;Database=android;uid=root;password=";
         private MySqlConnection mysqlConnection = null;
 
         public Connection()
