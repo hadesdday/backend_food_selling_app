@@ -53,6 +53,14 @@ public class DatabaseContext : DbContext
             entity.Property(e => e.Rate).IsRequired();
             entity.Property(e => e.Active).IsRequired();
         });
+
+        modelBuilder.Entity<UserEntity>(entity =>
+        {
+            entity.HasKey(e => e.Username);
+            entity.Property(e => e.Password).IsRequired();
+            entity.Property(e => e.Email).IsRequired();
+            entity.Property(e => e.Role).IsRequired();
+        });
     }
 
     public DbSet<BillEntity> Bill { get; set; }
@@ -60,4 +68,5 @@ public class DatabaseContext : DbContext
     public DbSet<CustomerEntity> Customer { get; set; }
     public DbSet<SaleEntity> Sale { get; set; }
     public DbSet<VoucherEntity> Voucher { get; set; }
+    public DbSet<UserEntity> User { get; set; }
 }

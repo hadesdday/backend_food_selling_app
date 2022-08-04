@@ -1,8 +1,11 @@
 ﻿//using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Web;
 using System.Web.Services;
 
@@ -82,6 +85,18 @@ public class AdminService : System.Web.Services.WebService
         try
         {
             return _context.Customer.OrderByDescending(c => c.CreatedAt).ToList<CustomerEntity>();
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
+    [WebMethod]
+    public List<CustomerEntity> GetCustomerListByOldest()
+    {
+        try
+        {
+            return _context.Customer.OrderBy(c => c.CreatedAt).ToList<CustomerEntity>();
         }
         catch (Exception)
         {
@@ -171,6 +186,18 @@ public class AdminService : System.Web.Services.WebService
         }
     }
     [WebMethod]
+    public List<VoucherEntity> GetVoucherListByOldest()
+    {
+        try
+        {
+            return _context.Voucher.OrderBy(t => t.CreatedAt).ToList<VoucherEntity>();
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
+    [WebMethod]
     public List<VoucherEntity> GetVoucherById(string id)
     {
         try
@@ -226,6 +253,18 @@ public class AdminService : System.Web.Services.WebService
         try
         {
             return _context.Sale.OrderByDescending(t => t.CreatedAt).ToList<SaleEntity>();
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
+    [WebMethod]
+    public List<SaleEntity> GetSaleListByOldest()
+    {
+        try
+        {
+            return _context.Sale.OrderBy(t => t.CreatedAt).ToList<SaleEntity>();
         }
         catch (Exception)
         {
@@ -353,7 +392,7 @@ public class AdminService : System.Web.Services.WebService
                     customerByName.Add(c);
                 }
             }
-            customerByName.OrderBy(c => c.CreatedAt);
+            customerByName.OrderByDescending(c => c.CreatedAt);
             return customerByName;
         }
         catch (Exception)
@@ -366,7 +405,7 @@ public class AdminService : System.Web.Services.WebService
     {
         try
         {
-            List<SaleEntity> list = _context.Sale.Where(t => t.FoodType == foodType).ToList<SaleEntity>();
+            List<SaleEntity> list = _context.Sale.Where(t => t.FoodType == foodType).OrderByDescending(t => t.CreatedAt).ToList<SaleEntity>();
             return list;
         }
         catch (Exception)
@@ -420,7 +459,7 @@ public class AdminService : System.Web.Services.WebService
         Connection connection = new Connection();
         return connection.exeNonQuery(sql);
     }
-    
+
     [WebMethod]
     public int getNumberOfFood()
     {
@@ -661,5 +700,59 @@ public class AdminService : System.Web.Services.WebService
 
         connection.closeConnection();
         return list;
+    }
+
+    [WebMethod]
+    public UserEntity Login(string username, string password)
+    {
+        try
+        {
+            UserEntity user = _context.User.Where(t => (t.Username.Equals(username) && t.Password.Equals(password))).FirstOrDefault<UserEntity>();
+            if (user.Role.Equals("admin"))
+            {
+                return user;
+            }
+            else
+            {
+                return null;
+            }
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+
+    }
+    [WebMethod]
+    public Boolean ForgotPassword(String username)
+    {
+        try
+        {
+            UserEntity user = _context.User.Where(t => t.Username.Equals(username)).FirstOrDefault<UserEntity>();
+            if (user != null && user.Role.Equals("admin"))
+            {
+                SmtpClient smtpClient = new SmtpClient("smtp.gmail.com", 587);
+
+                smtpClient.Credentials = new NetworkCredential("devwebchichoo@gmail.com", "btguqgaesartwahq");
+                smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+                smtpClient.EnableSsl = true;
+                MailMessage mail = new MailMessage();
+
+                mail.Body = "Xin chào bạn , chúng tôi có nhận được yêu cầu quên mật khẩu từ bạn .\n Mật khẩu của bạn là " + user.Password;
+                mail.From = new MailAddress("devwebchichoo@gmail.com");
+                mail.To.Add(new MailAddress(user.Email));
+                mail.Subject = "Quên mật khẩu - Admin Food Selling App";
+                smtpClient.Send(mail);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        catch (Exception)
+        {
+            return false;
+        }
     }
 }
