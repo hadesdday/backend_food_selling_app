@@ -755,4 +755,40 @@ public class AdminService : System.Web.Services.WebService
             return false;
         }
     }
+    [WebMethod]
+    public List<double> GetStats()
+    {
+        List<double> turnOver = new List<double>();
+
+        for (int i = 1; i < 13; i++)
+        {
+            turnOver.Add(0);
+        }
+
+        string strConnection = "server=localhost;uid=root;pwd=;database=android;";
+        MySqlConnection conn = new MySqlConnection(strConnection);
+        conn.Open();
+        MySqlCommand newCmd = conn.CreateCommand();
+        string querystring = "select month(createdat) thang ,sum(price) tong\n" +
+                    " from bill\n" +
+                    " where status = 2 and year(createdat) = year(NOW())\n" +
+                    "group by month(createdat)";
+        newCmd.CommandText = querystring;
+        using (MySqlDataReader reader = newCmd.ExecuteReader())
+        {
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    string key = reader[0].ToString();
+                    double value = Double.Parse(reader[1].ToString());
+                    int k = Convert.ToInt32(key);
+                    turnOver[k - 1] = value;
+                }
+            }
+            else Console.WriteLine("not enough data.");
+        }
+        conn.Close();
+        return turnOver;
+    }
 }
